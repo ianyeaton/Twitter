@@ -13,6 +13,10 @@ racist_dict = {
         "donald trump": "822215679726100480"
  }
 
+
+link_to_twitter_id_finder = 'https://tweeterid.com/'
+
+
 def create_url():
     # Tweet fields are adjustable.
     # Options include:
@@ -35,7 +39,9 @@ def create_url():
     url = "https://api.twitter.com/2/users/{}/liked_tweets".format(id)
     return url, tweet_fields
 
+
 def bearer_oauth(r):
+
     """
     Method required by bearer token authentication.
     """
