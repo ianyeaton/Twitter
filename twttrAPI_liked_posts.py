@@ -20,16 +20,15 @@ racist_dict = {
 
 
 def create_url():
-    # Tweet fields are adjustable.
-    # Options include:
+    
+    # Adjust tweet fields to your needs:
     # attachments, author_id, context_annotations,
     # conversation_id, created_at, entities, geo, id,
     # in_reply_to_user_id, lang, non_public_metrics, organic_metrics,
     # possibly_sensitive, promoted_metrics, public_metrics, referenced_tweets,
     # source, text, and withheld
     tweet_fields = "tweet.fields=author_id,text"
-    # Be sure to replace your-user-id with your own user ID or one of an authenticating user
-    # You can find a user ID by using the user lookup endpoint
+
     info = input("Enter a valid Twitter User's id number or name, we might already have the info you need!: ")
     if info.lower() in racist_dict.keys():
         frmt = info.lower()
@@ -88,8 +87,10 @@ def main():
 
     engine = db.create_engine('sqlite:///Liked_Tweets.db')
     tweets_tbl.to_sql('tweets', con=engine, if_exists='replace', index=False)
-    query_result = engine.execute("SELECT * FROM tweets;").fetchall()
-    print(pd.DataFrame(query_result))
+    
+    # Testing a query to see if data is correctly uploading to the database
+    # query_result = engine.execute("SELECT * FROM tweets;").fetchall()
+    # print(pd.DataFrame(query_result))
 
 if __name__ == "__main__":
     main()
