@@ -1,20 +1,22 @@
 import requests
 import os
 import json
+import pandas as pd
+import sqlalchemy as db
 
-# Set the environment variables before hand in the terminal with:
-# export 'BEARER_TOKEN'='AAAAAAAAAAAAAAAAAAAAAIcNeQEAAAAAKQessa1SWX%2FXKCLWdzF%2B8Rj1FPA%3DN2obgg63K4RQmn6kDj4aIbXbmLeWnD2RJPDiHpYb6U2fDxKpPy'
+
+# Set the environment variables before hand in the terminal with this line of code:
+# export 'BEARER_TOKEN'='<your_bearer_token>'
+
 bearer_token = os.environ.get("BEARER_TOKEN")
 
 racist_dict = {
-        "marjorie taylor greene": "1344356576786866176 ",
+        "marjorie taylor greene": "1344356576786866176",
         "jim jordan": "18166778",
         "john cornyn": "13218102",
         "donald trump": "822215679726100480"
  }
 
-
-link_to_twitter_id_finder = 'https://tweeterid.com/'
 
 
 def create_url():
@@ -25,10 +27,10 @@ def create_url():
     # in_reply_to_user_id, lang, non_public_metrics, organic_metrics,
     # possibly_sensitive, promoted_metrics, public_metrics, referenced_tweets,
     # source, text, and withheld
-    tweet_fields = "tweet.fields=attachments,author_id,created_at,public_metrics"
+    tweet_fields = "tweet.fields=author_id,text"
     # Be sure to replace your-user-id with your own user ID or one of an authenticating user
     # You can find a user ID by using the user lookup endpoint
-    info = input("Enter a valid Twitter User's id number or name, we might already have the info you need! : ")
+    info = input("Enter a valid Twitter User's id number or name, we might already have the info you need!: ")
     if info.lower() in racist_dict.keys():
         frmt = info.lower()
         id = racist_dict[frmt]
@@ -66,9 +68,38 @@ def connect_to_endpoint(url, tweet_fields):
 
 def main():
     url, tweet_fields = create_url()
+    
+    # this is the dict
     json_response = connect_to_endpoint(url, tweet_fields)
-    print(json.dumps(json_response, indent=4, sort_keys=True))
 
+    # this is a string representation of it
+    formated_str = (json.dumps(json_response, indent=4, sort_keys=True))
+    
+    # this is a list of dictionaries
+    list_of_data = json_response["data"]
+    
+    # empty dict to add the tweet id (key) and tweet content (val) from list_of_data
+    new_dict = {}
+    for i in range(len(list_of_data)):
+        new_dict[list_of_data[i]["id"]] = list_of_data[i]["text"]
+    
+
+    tweets_tbl = pd.DataFrame.from_dict(new_dict, orient='index', columns=['Tweet'])
+
+    engine = db.create_engine('sqlite:///Liked_Tweets.db')
+    tweets_tbl.to_sql('tweets', con=engine, if_exists='replace', index=False)
+    query_result = engine.execute("SELECT * FROM tweets;").fetchall()
+    print(pd.DataFrame(query_result))
 
 if __name__ == "__main__":
     main()
+
+
+
+
+### Notes to be put in the README.md:
+
+# BEARER_TOKEN = AAAAAAAAAAAAAAAAAAAAAIcNeQEAAAAAKQessa1SWX%2FXKCLWdzF%2B8Rj1FPA%3DN2obgg63K4RQmn6kDj4aIbXbmLeWnD2RJPDiHpYb6U2fDxKpPy
+# api_key = 'yQeAcO4i2SdtfDBMum4ZQyg98'
+# api_key_secret = '95XDKBk0fBwXmwWniLXUnnrkYSx7VQF07RobX8zrHj1FUGia1d'
+# link_to_twitter_id_finder = 'https://tweeterid.com/'
