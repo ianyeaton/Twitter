@@ -10,6 +10,7 @@ import sqlalchemy as db
 
 bearer_token = os.environ.get("BEARER_TOKEN")
 
+
 racist_dict = {
         "marjorie taylor greene": "1344356576786866176",
         "jim jordan": "18166778",
@@ -18,15 +19,12 @@ racist_dict = {
  }
 
 
-
 def create_url():
+    """
+    Creating the url in order to make the request to the API
+    """
     
-    # Adjust tweet fields to your needs:
-    # attachments, author_id, context_annotations,
-    # conversation_id, created_at, entities, geo, id,
-    # in_reply_to_user_id, lang, non_public_metrics, organic_metrics,
-    # possibly_sensitive, promoted_metrics, public_metrics, referenced_tweets,
-    # source, text, and withheld
+    # these are adjustable, see README.md for other tweet fields
     tweet_fields = "tweet.fields=author_id,text"
 
     info = input("Enter a valid Twitter User's id number or name, we might already have the info you need!: ")
@@ -35,8 +33,7 @@ def create_url():
         id = racist_dict[frmt]
     else:
         id = info
-    # You can adjust ids to include a single Tweets.
-    # Or you can add to up to 100 comma-separated IDs
+    
     url = "https://api.twitter.com/2/users/{}/liked_tweets".format(id)
     return url, tweet_fields
 
@@ -44,7 +41,7 @@ def create_url():
 def bearer_oauth(r):
 
     """
-    Method required by bearer token authentication.
+    Bearer token authentication step
     """
 
     r.headers["Authorization"] = f"Bearer {bearer_token}"
@@ -87,20 +84,7 @@ def main():
 
     engine = db.create_engine('sqlite:///Liked_Tweets.db')
     tweets_tbl.to_sql('tweets', con=engine, if_exists='replace', index=False)
-    
-    # Testing a query to see if data is correctly uploading to the database
-    # query_result = engine.execute("SELECT * FROM tweets;").fetchall()
-    # print(pd.DataFrame(query_result))
+
 
 if __name__ == "__main__":
     main()
-
-
-
-
-### Notes to be put in the README.md:
-
-# BEARER_TOKEN = AAAAAAAAAAAAAAAAAAAAAIcNeQEAAAAAKQessa1SWX%2FXKCLWdzF%2B8Rj1FPA%3DN2obgg63K4RQmn6kDj4aIbXbmLeWnD2RJPDiHpYb6U2fDxKpPy
-# api_key = 'yQeAcO4i2SdtfDBMum4ZQyg98'
-# api_key_secret = '95XDKBk0fBwXmwWniLXUnnrkYSx7VQF07RobX8zrHj1FUGia1d'
-# link_to_twitter_id_finder = 'https://tweeterid.com/'
