@@ -1,4 +1,4 @@
-# *Some notes on this repository*
+# **Welcome to Shiesty Twitter!**
 
 #### This is the style check which uses continuous integration to check for every commit: 
 
