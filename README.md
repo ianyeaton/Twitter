@@ -38,6 +38,14 @@
     query_result = engine.execute("SELECT * FROM tweets;").fetchall()
     print(pd.DataFrame(query_result))
 
+
+#### Libraries to install which are necessary for the code to execute:
+> - IPython library
+> - json library
+> - requests library
+> - pandas library
+> - sqlalchemy library
+
 - **To access the Twitter API:**
 > [Twitter API](https://developer.twitter.com/en/docs/twitter-api)
 
